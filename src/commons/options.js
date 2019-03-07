@@ -1,43 +1,43 @@
 export const Province = [
   {
     label: "BC",
-    value: "british columbia"
+    value: "British Columbia"
   },
   {
     label: "AB",
-    value: "alberta"
+    value: "Alberta"
   },
   {
     label: "ON",
-    value: "ontario"
+    value: "Ontario"
   },
   {
     label: "PEI",
-    value: "prince edward island"
+    value: "Prince Edward Island"
   },
   {
     label: "NL",
-    value: "newfoundland and labrador"
+    value: "Newfoundland and Labrador"
   },
   {
     label: "SK",
-    value: "saskatchewan"
+    value: "Saskatchewan"
   },
   {
     label: "NV",
-    value: "nunavut"
+    value: "Nunavut"
   },
   {
     label: "NS",
-    value: "nova scotia"
+    value: "Nova Scotia"
   },
   {
     label: "NT",
-    value: "northwest territories"
+    value: "Northwest Territories"
   },
   {
     label: "MB",
-    value: "manitoba"
+    value: "Manitoba"
   }
 ];
 

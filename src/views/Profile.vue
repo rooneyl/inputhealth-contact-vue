@@ -1,56 +1,84 @@
 <template>
-  <q-layout>
-    <q-page padding>
-      <div class="fill">
-        <div class="row">
-          <div class="column1">
-            <div class="fill">
-              <q-card inline style="align:center; width: 90%; height: 90%">
-                <q-card-media overlay-position="top">
-                  <img :src="defaultImage" inline style="width:100% height: 100%">
-                </q-card-media>
-              </q-card>
-            </div>
-            <div class="center">
-              <q-btn outline color="primary" label="Picture" icon="add"/>
-            </div>
-          </div>
-          <div class="column2">
-            <!-- Required Field -->
-            <q-field :error="errorName" error-label="Oops, Name is required">
-              <q-input v-model="contact.name" stack-label="Name"/>
-            </q-field>
-            <q-field :error="errorPhone" error-label="Oops, Phone number is required">
-              <q-input v-model="contact.phone" type="number" stack-label="Phone Number"/>
-            </q-field>
-            <q-field :error="errorEmail" error-label="Oops, Email is required">
-              <q-input v-model="contact.email" stack-label="Email"/>
-            </q-field>
-          </div>
-          <br>
-          <br>
-          <!-- Optional Field -->
-          <div inline style="width: 100%;">
-            <q-input v-model="contact.street" stack-label="Address"/>
-            <q-input v-model="contact.city" stack-label="City"/>
-            <q-input v-model="contact.postalCode" stack-label="PostalCode"/>
-            <q-select v-model="contact.province" :options="provinceOptions" stack-label="Province"/>
-            <q-select v-model="contact.gender" :options="genderOptions" stack-label="Sex"/>
-            <q-datetime v-model="contact.birthDay" type="date" stack-label="Birth Day"/>
-            <q-input v-model="contact.note" stack-label="Note"/>
-          </div>
-          <div class="center">
-            <q-btn outline color="primary" :label="editingStatus" icon="add" @click="handleClick"/>
+  <q-page padding class="docs-chip row justify-center">
+    <div class="col" style="width: 400px; max-width: 45vw;">
+      <div class="row" style="width:100%">
+        <div class="col-4 justify-center" style="min-width:200px;">
+          <q-card-media overlay-position="top">
+            <img :src="defaultImage" inline style="width:100% height: 100%">
+          </q-card-media>
+          <div class="row justify-center" style="width:100%">
+            <q-btn outline disable color="primary" label="Picture" icon="add"/>
           </div>
         </div>
+        <div class="col justify-center" style="min-width:200px;">
+          <!-- Required Field -->
+          <q-field :error="errorName" error-label="Oops, Name is required">
+            <q-input v-model="contact.name" stack-label="Name"/>
+          </q-field>
+          <q-field :error="errorPhone" error-label="Oops, Phone number is required">
+            <q-input v-model="contact.phone" type="number" stack-label="Phone Number"/>
+          </q-field>
+          <q-field :error="errorEmail" error-label="Oops, Email is required">
+            <q-input v-model="contact.email" stack-label="Email"/>
+          </q-field>
+        </div>
+        <!-- Optional Field -->
+        <div class="row">
+          <div class="col-12">
+            <q-input style="width:100%" v-model="contact.street" stack-label="Address"/>
+          </div>
+          <div class="col-12">
+            <q-input v-model="contact.city" stack-label="City"/>
+          </div>
+          <div class="col-12">
+            <q-input v-model="contact.postalCode" stack-label="PostalCode"/>
+          </div>
+          <div class="col-12">
+            <q-select v-model="contact.province" :options="provinceOptions" stack-label="Province"/>
+          </div>
+          <div class="col-12">
+            <q-select v-model="contact.gender" :options="genderOptions" stack-label="Gender"/>
+          </div>
+          <div class="col-12">
+            <q-datetime v-model="contact.birthDay" type="date" stack-label="Birth Day"/>
+          </div>
+          <div class="col-12">
+            <q-input v-model="contact.note" stack-label="Note"/>
+          </div>
+          <div class="col-12">
+            <q-chips-input v-model="contact.tags" style="width:100%" stack-label="Tags"/>
+          </div>
+        </div>
+        <!-- BUTTONS -->
+        <div class="row justify-center" style="width:100%;">
+          <span>
+            <q-btn
+              outline
+              color="primary"
+              label="SAVE"
+              icon="add"
+              @click="handleClick"
+              style="margin:10px; width:125px"
+            />
+            <q-btn
+              v-if="editingStatus"
+              outline
+              color="primary"
+              label="DELETE"
+              icon="delete"
+              @click="deleteContact"
+              style="margin:10px; width:125px"
+            />
+          </span>
+        </div>
       </div>
-    </q-page>
-  </q-layout>
+    </div>
+  </q-page>
 </template>
 
 <script>
 import { Province, Gender } from "@/commons/options";
-import { FETCH_USER } from "@/store";
+import { FETCH_USER, DELETE_USER } from "@/store";
 import { mapGetters } from "vuex";
 import defaultImage from "@/assets/defaultImage.jpg";
 
@@ -72,8 +100,10 @@ export default {
         gender: "",
         street: "",
         city: "",
+        note: "",
         province: "",
-        postalCode: ""
+        postalCode: "",
+        tags: []
       }
     };
   },
@@ -88,11 +118,13 @@ export default {
       // return require("@/assets/defaultImage.jpg");
     },
     editingStatus() {
-      if (this.contact.id.length != 0) return "EDIT";
-      return "ADD";
+      return this.contact.id.length != 0;
     }
   },
   methods: {
+    deleteContact() {
+      this.$store.dispatch(DELETE_USER, this.contact);
+    },
     handleClick() {
       this.errorName = this.contact.name == undefined || this.contact.name.length == 0;
       this.errorPhone = this.contact.phone == undefined || this.contact.phone.length == 0;
@@ -110,34 +142,12 @@ export default {
 </script>
 
 <style scoped>
-.row {
-  display: flex;
-}
-
-.column1 {
-  flex: 25%;
-  margin: 5px;
-}
-
-.column2 {
-  flex: 70%;
-  margin: 5px;
-}
-.center {
-  text-align: center;
-  width: 100%;
-  padding: 20px;
-}
-.fill {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-}
-.fill img {
-  flex-shrink: 0;
+img {
   min-width: 100%;
   min-height: 100%;
+  width: auto;
+  height: auto;
+  padding: 10px;
 }
 </style>
 

@@ -3,25 +3,18 @@
     <!-- Header -->
     <q-layout-header>
       <q-toolbar color="primary">
-        <q-btn flat dense round @click="backHome" aria-label="Menu" icon="home"/>
-
-        <!-- <q-toolbar-title>Home</q-toolbar-title>
-        <q-toolbar-main>Add</q-toolbar-main>-->
+        <q-btn flat dense round @click="backHome" aria-label="MENU" icon="home"/>
         <q-toolbar-title></q-toolbar-title>
-
-        <q-btn flat dense round @click="addContact" aria-label="Shuffle" icon="shuffle"/>
+        <q-btn flat dense round @click="listView" aria-label="GALARY_VIEW" icon="grid_on"/>
+        <q-btn flat dense round @click="backHome" aria-label="List" icon="list"/>
+        <q-btn flat dense round @click="shuffleContact" aria-label="SHUFFLE" icon="shuffle"/>
         <q-btn flat dense round @click="addContact" aria-label="ADD" icon="add"/>
       </q-toolbar>
     </q-layout-header>
-
     <!-- Container -->
     <q-page-container>
-      <div v-if="!this.isError && this.rawContactList.length != 0">
-        <router-view/>
-      </div>
-      <div v-else-if="!this.isError">
-        <!-- <Loading/> -->
-      </div>
+      <router-view v-if="!this.isError && this.rawContactList.length != 0"/>
+      <div v-else-if="!this.isError"></div>
       <div v-else>There is something wrong with internet Connetction</div>
     </q-page-container>
   </q-layout>
@@ -30,6 +23,7 @@
 <script>
 import { mapState } from "vuex";
 import { FETCH_USERS } from "@/store";
+import { SHUFFLE_USERS } from "@/store";
 export default {
   name: "LayoutDefault",
   created() {
@@ -37,17 +31,18 @@ export default {
   },
   computed: { ...mapState(["isError", "rawContactList"]) },
   methods: {
-    backHome: function() {
+    backHome() {
       this.$router.push({ name: "home" });
     },
-    addContact: function() {
+    addContact() {
       this.$router.push({ name: "profile", params: { id: "add" } });
     },
-    add: function() {
-      window.show("TTT");
+    shuffleContact() {
+      this.$store.commit(SHUFFLE_USERS);
+    },
+    listView() {
+      this.$router.push({ name: "gallary" });
     }
   }
 };
 </script>
-
-<style></style>

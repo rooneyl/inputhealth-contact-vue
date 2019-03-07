@@ -1,24 +1,24 @@
 <template>
-  <a href inline style="all: unset" @click.prevent="getDetail">
+  <span href @click="getDetail">
     <q-card inline class="q-ma-sm">
       <q-card-media>
         <img :src="getImage" style="width:180px; height:180px">
       </q-card-media>
       <q-card-title>
         {{name}}
-        <span slot="subtitle">{{phone}}</span>
+        <span slot="subtitle">
+          <q-icon name="phone" size="14px"/>
+          {{getPhoneNum}}
+        </span>
+        
         <span slot="main">{{contact.email}}</span>
       </q-card-title>
-      <q-card-actions>
-        <q-btn flat icon="edit">EDIT</q-btn>
-        <q-btn flat icon="delete" @click="deleteContact">DELETE</q-btn>
-      </q-card-actions>
+      <q-card-separator/>
     </q-card>
-  </a>
+  </span>
 </template>
 
 <script>
-import { DELETE_USER } from "@/store";
 const shortName = (name) => {
   if (name.length > 16) {
     let shortName = name.split(" ");
@@ -47,14 +47,19 @@ export default {
     getImage() {
       if (this.contact.picture.length == 0) return require("@/assets/defaultImage.jpg");
       return this.contact.picture;
+    },
+    getPhoneNum() {
+      if (this.contact.phone.length == 10) {
+        return `(${this.contact.phone.slice(0, 3)})-${this.contact.phone.slice(
+          3,
+          6
+        )}-${this.contact.phone.slice(6, 10)}`;
+      }
     }
   },
   methods: {
     getDetail() {
       this.$router.push(this.contact.id);
-    },
-    deleteContact() {
-      this.$store.dispatch(DELETE_USER, this.contact);
     }
   }
 };
@@ -66,5 +71,14 @@ export default {
   height: 10px;
   margin: 20px;
   color: black;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s;
+}
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

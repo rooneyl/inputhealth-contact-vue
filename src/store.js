@@ -3,6 +3,7 @@ import Vuex from "vuex";
 import EventService from "@/services/EventService";
 import { Loading } from "quasar";
 import router from "@/router";
+import _ from "lodash";
 
 Vue.use(Vuex);
 
@@ -10,6 +11,8 @@ Vue.use(Vuex);
 export const SET_USERS = "SET_USERS";
 export const ADD_USER = "ADD_USER";
 export const REMOVE_USER = "REMOVE_USER";
+export const SHUFFLE_USERS = "SHUFFLE_USERS";
+export const REMOVE_TAG = "REMOVE_TAG";
 
 export const FLAG_ERROR = "FLAG_ERROR";
 export const UNFLAG_ERROR = "UNFLAG_ERROR";
@@ -31,6 +34,10 @@ const capEach = (sentence) => {
     .join(" ");
 };
 
+const randomTags = () => {
+  return ["Family", "Work", "Friend"].filter(() => Math.random() >= 0.3);
+};
+
 const manipulateList = (rawContactList) => {
   const boxContact = (contact) => {
     return {
@@ -42,8 +49,10 @@ const manipulateList = (rawContactList) => {
       gender: contact.gender,
       street: capEach(contact.location.street),
       city: capEach(contact.location.city),
-      province: contact.location.state,
-      postalCode: contact.location.postcode.toUpperCase()
+      province: capEach(contact.location.state),
+      birthday: contact.dob.date,
+      postalCode: contact.location.postcode.toUpperCase(),
+      tags: randomTags()
     };
   };
   return rawContactList.map(boxContact).sort((a, b) => a.name.localeCompare(b.name.first) > 0);
@@ -71,6 +80,9 @@ export default new Vuex.Store({
     },
     [UNFLAG_ERROR](state) {
       state.isError = false;
+    },
+    [SHUFFLE_USERS](state) {
+      state.rawContactList = _.shuffle(state.rawContactList);
     }
   },
   actions: {

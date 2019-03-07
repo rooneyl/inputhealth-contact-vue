@@ -23,14 +23,14 @@
 
 <script>
 import { mapState } from "vuex";
-import ContactCard from "@/components/ContactCard";
+import ContactCard from "@/components/ContactCardListView";
 export default {
   name: "home",
   data() {
     return {
       page: 1,
       search: "",
-      contactPerPage: 16
+      contactPerPage: 8
     };
   },
   components: {
@@ -43,12 +43,7 @@ export default {
       else {
         this.page = 1;
         return this.rawContactList.filter((c) => {
-          console.log("???");
-          console.log(c.tags);
-          return (
-            c.name.toLowerCase().includes(this.search.toLowerCase()) ||
-            c.tags.filter((tag) => tag.toLowerCase().includes(this.search.toLowerCase())).length > 0
-          );
+          return c.name.toLowerCase().includes(this.search.toLowerCase());
         });
       }
     },
