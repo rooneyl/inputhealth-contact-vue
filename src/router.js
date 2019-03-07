@@ -3,7 +3,7 @@ import Router from "vue-router";
 import DefaultLayout from "./layouts/Default.vue";
 import Home from "./views/Home.vue";
 import Profile from "./views/Profile.vue";
-import ListView from "./views/ListView";
+import ListView from "./views/NewListView";
 
 Vue.use(Router);
 
@@ -16,17 +16,18 @@ export default new Router({
         {
           path: "",
           name: "home",
-          component: ListView
+          component: Home
         },
         {
           path: "/gallary",
           name: "gallary",
-          component: Home
+          component: ListView
         },
         {
           path: "/:id",
           name: "profile",
-          component: Profile
+          component: Profile,
+          meta: { transitionName: "slide" }
         }
       ]
     }

@@ -1,6 +1,6 @@
 <template>
-  <q-page class="row justify-center">
-    <div class="search-bar" style="height:10%">
+  <q-page padding>
+    <div style="padding:20px">
       <q-input
         v-model="search"
         float-label="Search"
@@ -9,11 +9,10 @@
         @
       />
     </div>
-    <!-- <q-page class="flex-center flex"> -->
-    <div class="row justify-center search-bar">
+    <div class="row justify-center">
       <ContactCard v-for="(contact,i) in currentPageList" :contact="contact" :key="i"/>
     </div>
-    <div class="row">
+    <div class="row justify-center" style="padding:20px">
       <q-pagination v-model="page" :max="maxPage" :input="true"/>
     </div>
   </q-page>
@@ -23,7 +22,7 @@
 
 <script>
 import { mapState } from "vuex";
-import ContactCard from "@/components/ContactCardListView";
+import ContactCard from "@/components/ContactCardListViewCopy";
 export default {
   name: "home",
   data() {

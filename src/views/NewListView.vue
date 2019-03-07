@@ -6,7 +6,6 @@
         float-label="Search"
         clearable
         :after="[{icon: 'arrow_forward', content: true, handler () {}}]"
-        @
       />
       <q-select
         multiple
@@ -18,7 +17,9 @@
       />
     </div>
     <div class="row justify-center">
-      <ContactCard v-for="(contact,i) in currentPageList" :contact="contact" :key="i"/>
+      <q-list link inset-separator style="width:600px">
+        <ListViewItem v-for="(contact,i) in currentPageList" :contact="contact" :key="i"/>
+      </q-list>
     </div>
     <div class="row justify-center" style="padding:20px">
       <q-pagination v-model="page" :max="maxPage" :input="true"/>
@@ -26,23 +27,21 @@
   </q-page>
 </template>
 
-<style></style>
-
 <script>
+import ListViewItem from "@/components/ListViewItem";
 import { mapState, mapGetters } from "vuex";
-import ContactCard from "@/components/ContactCard";
 export default {
   name: "home",
   data() {
     return {
+      tagSearch: [],
       page: 1,
       search: "",
-      tagSearch: [],
-      contactPerPage: 14
+      contactPerPage: 10
     };
   },
   components: {
-    ContactCard
+    ListViewItem
   },
   computed: {
     ...mapState(["rawContactList"]),
@@ -76,18 +75,14 @@ export default {
     maxPage() {
       return Math.ceil(this.contactList.length / this.contactPerPage);
     }
+  },
+  methods: {
+    getDetail(contact) {
+      this.$router.push(contact.id);
+    }
   }
 };
 </script>
 
-<style>
-.search-bar {
-  width: 96%;
-  height: 10%;
-  margin: 2%;
-}
-.s-bar {
-  width: 100%;
-  justify-content: center;
-}
+<style scoped>
 </style>

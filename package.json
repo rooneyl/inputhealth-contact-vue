@@ -10,8 +10,10 @@
   "dependencies": {
     "axios": "^0.18.0",
     "lodash": "^4.17.11",
+    "node-sass": "^4.11.0",
     "quasar-extras": "^2.0.4",
     "quasar-framework": "^0.17.0",
+    "sass-loader": "^7.1.0",
     "vue": "^2.6.6",
     "vue-router": "^3.0.1",
     "vuelidate": "^0.7.4",

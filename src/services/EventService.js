@@ -10,5 +10,5 @@ const api = axios.create({
 });
 
 export default async () => {
-  return api.get("/?seed=foobar&&nat=ca&&results=16");
+  return api.get("/?seed=foobar&&nat=ca&&results=20");
 };

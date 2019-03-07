@@ -13,6 +13,7 @@ export const ADD_USER = "ADD_USER";
 export const REMOVE_USER = "REMOVE_USER";
 export const SHUFFLE_USERS = "SHUFFLE_USERS";
 export const REMOVE_TAG = "REMOVE_TAG";
+export const CHANGE_VIEW = "CHANGE_VIEW";
 
 export const FLAG_ERROR = "FLAG_ERROR";
 export const UNFLAG_ERROR = "UNFLAG_ERROR";
@@ -60,6 +61,7 @@ const manipulateList = (rawContactList) => {
 
 export default new Vuex.Store({
   state: {
+    viewTpye: true,
     rawContactList: [],
     isError: false
   },
@@ -83,6 +85,9 @@ export default new Vuex.Store({
     },
     [SHUFFLE_USERS](state) {
       state.rawContactList = _.shuffle(state.rawContactList);
+    },
+    [CHANGE_VIEW](state) {
+      state.viewTpye = !state.viewTpye;
     }
   },
   actions: {
@@ -110,10 +115,9 @@ export default new Vuex.Store({
       setTimeout(() => {
         Loading.hide();
         commit(ADD_USER, contact);
-        router.push({ name: "home" });
       }, 2000);
     },
-    [DELETE_USER]({ commit }, contact) {
+    [DELETE_USER]({ commit, state }, contact) {
       Loading.show({
         spinnerColor: "blue"
       });
@@ -121,11 +125,20 @@ export default new Vuex.Store({
       setTimeout(() => {
         Loading.hide();
         commit(REMOVE_USER, contact);
-        router.push({ name: "home" });
+        router.push({ name: state.viewTpye });
       }, 2000);
     }
   },
   getters: {
-    getContactById: (state) => (id) => state.rawContactList.find((c) => c.id == id)
+    getContactById: (state) => (id) => state.rawContactList.find((c) => c.id == id),
+    tagOptionList: (state) => {
+      const set1 = new Set();
+      state.rawContactList.forEach((contact) => contact.tags.forEach((tag) => set1.add(tag)));
+      const result = [];
+      set1.forEach((c) => {
+        result.push({ label: c, value: c });
+      });
+      return result;
+    }
   }
 });
