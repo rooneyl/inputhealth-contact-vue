@@ -43,7 +43,10 @@ export default {
       else {
         this.page = 1;
         return this.rawContactList.filter((c) => {
-          return c.name.toLowerCase().includes(this.search.toLowerCase());
+          return (
+            c.name.toLowerCase().includes(this.search.toLowerCase()) ||
+            c.tags.filter((tag) => tag.toLowerCase().includes(this.search.toLowerCase())).length > 0
+          );
         });
       }
     },
