@@ -1,5 +1,5 @@
 <template>
-  <span href @click="getDetail">
+  <span href style="cursor:pointer" @click="getDetail">
     <q-card inline class="q-ma-sm">
       <q-card-media>
         <img :src="getImage" style="width:180px; height:180px">

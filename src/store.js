@@ -61,7 +61,7 @@ const manipulateList = (rawContactList) => {
 
 export default new Vuex.Store({
   state: {
-    viewTpye: true,
+    viewTpye: "home",
     rawContactList: [],
     isError: false
   },
@@ -87,7 +87,7 @@ export default new Vuex.Store({
       state.rawContactList = _.shuffle(state.rawContactList);
     },
     [CHANGE_VIEW](state) {
-      state.viewTpye = !state.viewTpye;
+      state.viewTpye = state.viewTpye == "home" ? "gallary" : "home";
     }
   },
   actions: {
@@ -107,7 +107,7 @@ export default new Vuex.Store({
         })
         .then(() => Loading.hide());
     },
-    [FETCH_USER]({ commit }, contact) {
+    [FETCH_USER]({ commit, state }, contact) {
       Loading.show({
         spinnerColor: "blue"
       });
@@ -115,6 +115,7 @@ export default new Vuex.Store({
       setTimeout(() => {
         Loading.hide();
         commit(ADD_USER, contact);
+        router.push({ name: state.viewTpye });
       }, 2000);
     },
     [DELETE_USER]({ commit, state }, contact) {

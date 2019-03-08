@@ -16,7 +16,6 @@ export default {
   },
   methods: {
     onChange(event) {
-      console.log(this.$route.model);
       this.$emit("input", this.$route.model);
     }
   }

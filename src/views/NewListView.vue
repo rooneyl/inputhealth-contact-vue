@@ -17,7 +17,7 @@
       />
     </div>
     <div class="row justify-center">
-      <q-list link inset-separator style="width:600px">
+      <q-list link inset-separator style="width:95%">
         <ListViewItem v-for="(contact,i) in currentPageList" :contact="contact" :key="i"/>
       </q-list>
     </div>

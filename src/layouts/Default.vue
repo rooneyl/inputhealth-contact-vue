@@ -7,6 +7,7 @@
           <q-btn
             v-if="backButton"
             dense
+            class="no-shadow"
             round
             @click="homeButton"
             aria-label="MENU"
@@ -16,20 +17,20 @@
         <div class="col" style="text-align:center;">
           <q-btn-toggle
             v-model="viewToggle"
-            color="white"
-            text-color="blue"
-            toggle-color="amber"
-            toggle-text-color
+            color="blue-8"
+            text-color="white"
+            toggle-color="white"
+            toggle-text-color="blue-8"
             dense
+            class="no-shadow"
+            @input="toggleMethod"
             :options="[
-            {label: 'List', value: 'list',icon:'list'},
-            {label: 'Grid', value: 'grid',icon:'grid_on'}
+            {label: 'Grid', value: 'home',icon:'grid_on'},
+            {label: 'List', value: 'gallary',icon:'list'}
           ]"
           />
         </div>
         <div class="col" style="text-align:right;">
-          <q-btn flat dense round @click="backHome" aria-label="GALARY_VIEW" icon="grid_on"/>
-          <q-btn flat dense round @click="listView" aria-label="List" icon="list"/>
           <q-btn flat dense round @click="shuffleContact" aria-label="SHUFFLE" icon="shuffle"/>
           <q-btn flat dense round @click="addContact" aria-label="ADD" icon="add"/>
         </div>
@@ -56,15 +57,15 @@
 <script>
 import { mapState } from "vuex";
 import { FETCH_USERS } from "@/store";
-import { SHUFFLE_USERS } from "@/store";
+import { SHUFFLE_USERS, CHANGE_VIEW } from "@/store";
+
 const DEFAULT_TRANSITION = "slide";
 const DEFAULT_TRANSITION_MODE = "out-in";
 export default {
   name: "LayoutDefault",
   data() {
     return {
-      viewToggle: "list",
-      mode: true,
+      viewToggle: "home",
       transitionName: DEFAULT_TRANSITION,
       transitionMode: DEFAULT_TRANSITION_MODE,
       transitionEnterActiveClass: ""
@@ -89,13 +90,19 @@ export default {
     });
   },
   computed: {
-    ...mapState(["isError", "rawContactList"]),
+    ...mapState(["isError", "rawContactList", "viewTpye"]),
     backButton() {
       return this.$route.name == "profile";
     }
   },
 
   methods: {
+    toggleMethod(val) {
+      if (val != this.viewTpye) {
+        this.$store.commit(CHANGE_VIEW);
+        this.$router.push({ name: this.viewTpye });
+      }
+    },
     beforeLeave(element) {
       this.prevHeight = getComputedStyle(element).height;
     },
@@ -112,8 +119,8 @@ export default {
       element.style.height = "auto";
     },
     backHome() {
-      this.mode = false;
       this.$router.push({ name: "home" });
+      this.$store.commit(CHANGE_VIEW);
     },
     addContact() {
       this.$router.push({ name: "profile", params: { id: "add" } });
@@ -122,29 +129,13 @@ export default {
       this.$store.commit(SHUFFLE_USERS);
     },
     listView() {
-      this.mode = true;
       this.$router.push({ name: "gallary" });
+      this.$store.commit(CHANGE_VIEW);
     },
     homeButton() {
-      console.log(this.$route.name);
-      if (this.mode) {
-        this.listView();
-      } else {
-        this.backHome();
-      }
+      this.$router.push({ name: this.viewTpye });
     }
   }
-  // ,
-  // watch: {
-  //   viewToggle() {
-  //     console.log("dd");
-  //     if (this.viewToggle == "list ") {
-  //       this.listView();
-  //       return;
-  //     }
-  //     this.homeButton();
-  //   }
-  // }
 };
 </script>
 <style lang="scss">

@@ -90,4 +90,8 @@ export default {
   width: 100%;
   justify-content: center;
 }
+
+.pointer {
+  cursor: pointer;
+}
 </style>
