@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import EventService from "@/services/EventService";
+import { Get, Delete, Update, Post } from "@/services/EventService";
 import { Loading } from "quasar";
 import router from "@/router";
 import _ from "lodash";
@@ -22,42 +22,7 @@ export const UNFLAG_ERROR = "UNFLAG_ERROR";
 export const FETCH_USERS = "FETCH_USERS";
 export const FETCH_USER = "FETCH_USER";
 export const DELETE_USER = "DELETE_USER";
-
-const cap = (str) => {
-  if (str.length == 1) return str.toUpperCase();
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
-
-const capEach = (sentence) => {
-  return sentence
-    .split(" ")
-    .map(cap)
-    .join(" ");
-};
-
-const randomTags = () => {
-  return ["Family", "Work", "Friend"].filter(() => Math.random() >= 0.3);
-};
-
-const manipulateList = (rawContactList) => {
-  const boxContact = (contact) => {
-    return {
-      name: cap(contact.name.first) + " " + cap(contact.name.last),
-      email: contact.email,
-      phone: contact.phone.split("-").join(""),
-      id: contact.phone,
-      picture: contact.picture.large,
-      gender: contact.gender,
-      street: capEach(contact.location.street),
-      city: capEach(contact.location.city),
-      province: capEach(contact.location.state),
-      birthday: contact.dob.date,
-      postalCode: contact.location.postcode.toUpperCase(),
-      tags: randomTags()
-    };
-  };
-  return rawContactList.map(boxContact).sort((a, b) => a.name.localeCompare(b.name.first) > 0);
-};
+export const UPDATE_USER = "UPDATE_USER";
 
 export default new Vuex.Store({
   state: {
@@ -67,12 +32,10 @@ export default new Vuex.Store({
   },
   mutations: {
     [SET_USERS](state, payload) {
+      payload.forEach((contact) => {
+        contact.tags = !contact.tags || contact.tags == "" ? [] : contact.tags.split(",");
+      });
       state.rawContactList = payload.sort((a, b) => a.name.localeCompare(b.name));
-    },
-    [ADD_USER](state, payload) {
-      state.rawContactList = state.rawContactList.filter((x) => x.id != payload.id);
-      state.rawContactList.push(payload);
-      state.rawContactList = state.rawContactList.sort((a, b) => a.name.localeCompare(b.name));
     },
     [REMOVE_USER](state, payload) {
       state.rawContactList = state.rawContactList.filter((c) => c.id != payload.id);
@@ -96,10 +59,10 @@ export default new Vuex.Store({
         spinnerColor: "blue"
       });
 
-      EventService()
+      Get()
         .then((res) => {
           commit(UNFLAG_ERROR);
-          commit(SET_USERS, manipulateList(res.data.results));
+          commit(SET_USERS, res.data);
         })
         .catch((e) => {
           console.log(e);
@@ -107,27 +70,51 @@ export default new Vuex.Store({
         })
         .then(() => Loading.hide());
     },
-    [FETCH_USER]({ commit, state }, contact) {
+    [FETCH_USER]({ commit, state, dispatch }, contact) {
       Loading.show({
         spinnerColor: "blue"
       });
-
-      setTimeout(() => {
-        Loading.hide();
-        commit(ADD_USER, contact);
-        router.push({ name: state.viewTpye });
-      }, 2000);
+      Post(contact)
+        .then(() => {
+          dispatch(FETCH_USERS);
+          router.push({ name: state.viewTpye });
+        })
+        .catch((e) => {
+          console.log(e);
+          commit(FLAG_ERROR);
+        })
+        .then(() => Loading.hide());
     },
-    [DELETE_USER]({ commit, state }, contact) {
+    [UPDATE_USER]({ commit, state, dispatch }, contact) {
+      Loading.show({
+        spinnerColor: "blue"
+      });
+      Update(contact)
+        .then(() => {
+          dispatch(FETCH_USERS);
+          router.push({ name: state.viewTpye });
+        })
+        .catch((e) => {
+          console.log(e);
+          commit(FLAG_ERROR);
+        })
+        .then(() => Loading.hide());
+    },
+    [DELETE_USER]({ commit, state, dispatch }, contact) {
       Loading.show({
         spinnerColor: "blue"
       });
 
-      setTimeout(() => {
-        Loading.hide();
-        commit(REMOVE_USER, contact);
-        router.push({ name: state.viewTpye });
-      }, 2000);
+      Delete(contact.id)
+        .then(() => {
+          dispatch(FETCH_USERS);
+          router.push({ name: state.viewTpye });
+        })
+        .catch((e) => {
+          console.log(e);
+          commit(FLAG_ERROR);
+        })
+        .then(() => Loading.hide());
     }
   },
   getters: {

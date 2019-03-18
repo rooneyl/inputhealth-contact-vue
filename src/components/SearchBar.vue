@@ -12,7 +12,7 @@
 export default {
   inheritAttrs: false,
   props: {
-    value: [String, Number]
+    value: String
   },
   methods: {
     onChange(event) {

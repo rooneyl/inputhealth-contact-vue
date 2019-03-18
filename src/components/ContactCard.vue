@@ -8,7 +8,7 @@
         {{name}}
         <span slot="subtitle">
           <q-icon name="phone" size="14px"/>
-          {{getPhoneNum}}
+          {{phone}}
         </span>
         
         <span slot="main">{{contact.email}}</span>
@@ -45,7 +45,7 @@ export default {
       return this.contact.email;
     },
     getImage() {
-      if (this.contact.picture.length == 0) return require("@/assets/defaultImage.jpg");
+      if (!this.contact.picture) return require("@/assets/defaultImage.jpg");
       return this.contact.picture;
     },
     getPhoneNum() {
@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     getDetail() {
-      this.$router.push(this.contact.id);
+      this.$router.push(this.contact.id.toString());
     }
   }
 };

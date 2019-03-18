@@ -13,7 +13,7 @@
               {{name}}
               <span slot="subtitle">
                 <q-icon name="phone" size="14px"/>
-                {{getPhoneNum}}
+                {{phone}}
               </span>
             </q-card-title>
             <q-card-separator/>
@@ -61,7 +61,7 @@ export default {
       return this.contact.email;
     },
     getImage() {
-      if (this.contact.picture.length == 0) return require("@/assets/defaultImage.jpg");
+      if (!this.contact.picture) return require("@/assets/defaultImage.jpg");
       return this.contact.picture;
     },
     address() {
@@ -80,7 +80,7 @@ export default {
   },
   methods: {
     getDetail() {
-      this.$router.push(this.contact.id);
+      this.$router.push(this.contact.id.toString());
     },
     deleteContact() {
       this.$store.dispatch(DELETE_USER, this.contact);

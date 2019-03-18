@@ -1,9 +1,9 @@
 <template>
-  <q-item :to="contact.id">
+  <q-item :to="contact.id.toString()">
     <q-item-side :avatar="getImage"/>
     <q-item-main>
       <q-item-tile label line="1">{{name}}</q-item-tile>
-      <q-item-tile sublabel line="1">{{getPhoneNum}}</q-item-tile>
+      <q-item-tile sublabel line="1">{{phone}}</q-item-tile>
     </q-item-main>
   </q-item>
 </template>
@@ -35,7 +35,7 @@ export default {
       return this.contact.email;
     },
     getImage() {
-      if (this.contact.picture.length == 0) return require("@/assets/defaultImage.jpg");
+      if (!this.contact.picture) return require("@/assets/defaultImage.jpg");
       return this.contact.picture;
     },
     getPhoneNum() {
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     getDetail() {
-      this.$router.push(this.contact.id);
+      this.$router.push(this.contact.id.toString());
     }
   }
 };
