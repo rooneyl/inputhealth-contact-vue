@@ -5,11 +5,11 @@
       <q-toolbar color="primary">
         <div class="col" style="text-align:left;">
           <q-btn
-            v-if="backButton"
+            v-if="backButtonVisible"
             dense
             class="no-shadow"
             round
-            @click="homeButton"
+            @click="backButton"
             aria-label="MENU"
             icon="arrow_back"
           />
@@ -23,11 +23,8 @@
             toggle-text-color="blue-8"
             dense
             class="no-shadow"
-            @input="toggleMethod"
-            :options="[
-            {label: 'Grid', value: 'home',icon:'grid_on'},
-            {label: 'List', value: 'gallary',icon:'list'}
-          ]"
+            @input="changeView"
+            :options="toggleOptions"
           />
         </div>
         <div class="col" style="text-align:right;">
@@ -42,9 +39,6 @@
         :name="transitionName"
         :mode="transitionMode"
         :enter-active-class="transitionEnterActiveClass"
-        @beforeLeave="beforeLeave"
-        @enter="enter"
-        @afterEnter="afterEnter"
       >
         <router-view v-if="!this.isError && this.rawContactList.length != 0"/>
         <div v-else-if="!this.isError"></div>
@@ -59,68 +53,39 @@ import { mapState } from "vuex";
 import { FETCH_USERS } from "@/store";
 import { SHUFFLE_USERS, CHANGE_VIEW } from "@/store";
 
-const DEFAULT_TRANSITION = "slide";
-const DEFAULT_TRANSITION_MODE = "out-in";
 export default {
   name: "LayoutDefault",
   data() {
     return {
-      viewToggle: "home",
-      transitionName: DEFAULT_TRANSITION,
-      transitionMode: DEFAULT_TRANSITION_MODE,
-      transitionEnterActiveClass: ""
+      viewToggle: "gallary-view",
+      transitionName: "slide",
+      transitionMode: `out-in`,
+      transitionEnterActiveClass: "",
+      toggleOptions: [
+        { label: "Grid", value: "gallary-view", icon: "grid_on" },
+        { label: "List", value: "list-view", icon: "list" }
+      ]
     };
   },
   created() {
     this.$store.dispatch(FETCH_USERS);
     this.$router.beforeEach((to, from, next) => {
-      let transitionName = to.meta.transitionName || from.meta.transitionName || DEFAULT_TRANSITION;
-
-      if (transitionName === "slide") {
-        const toDepth = to.path.length;
-        const fromDepth = from.path.length;
-        transitionName = toDepth < fromDepth ? "slide-right" : "slide-left";
-      }
-
-      this.transitionEnterActiveClass = `${transitionName}-enter-active`;
-
-      this.transitionName = transitionName;
-
+      const toDepth = to.path.length;
+      const fromDepth = from.path.length;
+      this.transitionName = toDepth < fromDepth ? "slide-right" : "slide-left";
       next();
     });
   },
   computed: {
-    ...mapState(["isError", "rawContactList", "viewTpye"]),
-    backButton() {
+    ...mapState(["isError", "rawContactList"]),
+    backButtonVisible() {
       return this.$route.name == "profile";
     }
   },
-
   methods: {
-    toggleMethod(val) {
-      if (val != this.viewTpye) {
-        this.$store.commit(CHANGE_VIEW);
-        this.$router.push({ name: this.viewTpye });
-      }
-    },
-    beforeLeave(element) {
-      this.prevHeight = getComputedStyle(element).height;
-    },
-    enter(element) {
-      const { height } = getComputedStyle(element);
-
-      element.style.height = this.prevHeight;
-
-      setTimeout(() => {
-        element.style.height = height;
-      });
-    },
-    afterEnter(element) {
-      element.style.height = "auto";
-    },
-    backHome() {
-      this.$router.push({ name: "home" });
+    changeView() {
       this.$store.commit(CHANGE_VIEW);
+      this.$router.push({ name: this.viewToggle });
     },
     addContact() {
       this.$router.push({ name: "profile", params: { id: "add" } });
@@ -128,30 +93,13 @@ export default {
     shuffleContact() {
       this.$store.commit(SHUFFLE_USERS);
     },
-    listView() {
-      this.$router.push({ name: "gallary" });
-      this.$store.commit(CHANGE_VIEW);
-    },
-    homeButton() {
-      this.$router.push({ name: this.viewTpye });
+    backButton() {
+      this.$router.push({ name: this.viewToggle });
     }
   }
 };
 </script>
 <style lang="scss">
-.fade-enter-active,
-.fade-leave-active {
-  transition-duration: 0.3s;
-  transition-property: opacity;
-  transition-timing-function: ease;
-  overflow: hidden;
-}
-
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
-}
-
 .slide-left-enter-active,
 .slide-left-leave-active,
 .slide-right-enter-active,
@@ -167,32 +115,9 @@ export default {
   opacity: 0;
   transform: translate(2em, 0);
 }
-
-.slide-left-leave-active,
-.slide-right-enter {
+.slide-right-enter,
+.slide-left-leave-active {
   opacity: 0;
   transform: translate(-2em, 0);
-}
-
-.zoom-enter-active,
-.zoom-leave-active {
-  animation-duration: 0.5s;
-  animation-fill-mode: both;
-  animation-name: zoom;
-}
-
-.zoom-leave-active {
-  animation-direction: reverse;
-}
-
-@keyframes zoom {
-  from {
-    opacity: 0;
-    transform: scale3d(0.3, 0.3, 0.3);
-  }
-
-  100% {
-    opacity: 1;
-  }
 }
 </style>

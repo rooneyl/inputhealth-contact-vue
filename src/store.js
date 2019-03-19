@@ -26,7 +26,7 @@ export const UPDATE_USER = "UPDATE_USER";
 
 export default new Vuex.Store({
   state: {
-    viewTpye: "home",
+    viewType: "gallary-view",
     rawContactList: [],
     isError: false
   },
@@ -50,7 +50,7 @@ export default new Vuex.Store({
       state.rawContactList = _.shuffle(state.rawContactList);
     },
     [CHANGE_VIEW](state) {
-      state.viewTpye = state.viewTpye == "home" ? "gallary" : "home";
+      state.viewType = state.viewType == "gallary-view" ? "list-view" : "gallary-view";
     }
   },
   actions: {
@@ -77,7 +77,7 @@ export default new Vuex.Store({
       Post(contact)
         .then(() => {
           dispatch(FETCH_USERS);
-          router.push({ name: state.viewTpye });
+          router.push({ name: state.viewType });
         })
         .catch((e) => {
           console.log(e);
@@ -92,7 +92,7 @@ export default new Vuex.Store({
       Update(contact)
         .then(() => {
           dispatch(FETCH_USERS);
-          router.push({ name: state.viewTpye });
+          router.push({ name: state.viewType });
         })
         .catch((e) => {
           console.log(e);
@@ -108,7 +108,7 @@ export default new Vuex.Store({
       Delete(contact.id)
         .then(() => {
           dispatch(FETCH_USERS);
-          router.push({ name: state.viewTpye });
+          router.push({ name: state.viewType });
         })
         .catch((e) => {
           console.log(e);
@@ -122,6 +122,7 @@ export default new Vuex.Store({
     tagOptionList: (state) => {
       const set1 = new Set();
       state.rawContactList.forEach((contact) => contact.tags.forEach((tag) => set1.add(tag)));
+
       const result = [];
       set1.forEach((c) => {
         result.push({ label: c, value: c });

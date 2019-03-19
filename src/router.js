@@ -1,9 +1,9 @@
 import Vue from "vue";
 import Router from "vue-router";
 import DefaultLayout from "./layouts/Default.vue";
-import Home from "./views/Home.vue";
+import GallaryView from "./views/GallaryView.vue";
 import Profile from "./views/Profile.vue";
-import ListView from "./views/NewListView";
+import ListView from "./views/ListView";
 
 Vue.use(Router);
 
@@ -15,12 +15,12 @@ export default new Router({
       children: [
         {
           path: "",
-          name: "home",
-          component: Home
+          name: "gallary-view",
+          component: GallaryView
         },
         {
           path: "/gallary",
-          name: "gallary",
+          name: "list-view",
           component: ListView
         },
         {

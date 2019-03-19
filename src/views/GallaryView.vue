@@ -18,7 +18,7 @@
       />
     </div>
     <div class="row justify-center">
-      <ContactCard v-for="(contact,i) in currentPageList" :contact="contact" :key="i"/>
+      <GallaryViewItem v-for="(contact,i) in currentPageList" :contact="contact" :key="i"/>
     </div>
     <div class="row justify-center" style="padding:20px">
       <q-pagination v-model="page" :max="maxPage" :input="true"/>
@@ -30,9 +30,8 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
-import ContactCard from "@/components/ContactCard";
+import GallaryViewItem from "@/components/GallaryViewItem";
 export default {
-  name: "home",
   data() {
     return {
       page: 1,
@@ -42,7 +41,7 @@ export default {
     };
   },
   components: {
-    ContactCard
+    GallaryViewItem
   },
   computed: {
     ...mapState(["rawContactList"]),
